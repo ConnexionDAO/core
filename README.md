@@ -1,17 +1,23 @@
-### Typescript DAO
+# Typescript DAO
 
 ### Installation
-#### Create .env file
-#### Run localhost scripts
+
+- Create .env file
+- Run localhost scripts
+
 ```
 npm i
+npm run prepare
 npm run node
 
 // OPEN NEW TERMINAL
+
 npm run deploy
 npm run sample
 ```
-#### Run testnet scripts
+
+- Run testnet scripts
+
 ```
 npm run testnet_deploy
 npm run testnet_sample
