@@ -2,7 +2,6 @@
 
 ### Installation
 #### Create .env file
-* Create ```.env``` file from ```.env.example```
 #### Run localhost scripts
 ```
 npm i
