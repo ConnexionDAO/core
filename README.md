@@ -28,28 +28,36 @@ npm run testnet_deploy
 npm run testnet_sample
 ```
 
-#### User Experience
+### Contracts
 
-- Organiser create a doxxed account
-- Organiser create event with raise target, description, date, and contract
-- Raise amount reached => 2 weeks (adjustable) before event
-- Organiser launch event (chat / activities activates)
-- Proposal and votes functionality
-- Event date and NFT distribution
+- Event Hub (Events Creator & Event State Mangement)
+  - Governor (Token & Timelock Contracts)
+  - Treasury (contribute / release / lock / unlock / claim / setSchedule)
+  - Randomised NFT (Create -> mintRandom)
+- Social Hub (User NFT)
+  - Subscribtion NFT (Expirable / User NFT Linkable)
+  - Content NFT (Access Token / L. Edition / User NFT Linkable)
 
-#### Contracts
+#### Event Flow
 
-- Factory Contract (Event)
-- Event Contract (Treasury, Description)
-- NFT Contract (Create Token, Mint)
-- Governance Contract (Create Proposal, Vote, Execute)
-- Chat and Activities
+Events can be in 5 states:
 
-#### Event Contract
-
-- Title, Description, Org Addr
-- Raise Target, Denomination
-- (later)
+- Fund Raising (Show plans, Active in chat)
+  - Publish (onlyOrganiser)
+  - Contribute Funds => Get DAO Token / Attendance NFT
+  - End Event (votable)
+- Fund Collected (Sending updates, Active in chat)
+  - Release Funds (onlyOwner / onlyCause / votable / any)
+  - Lock / Unlock Funds (onlyOwner / votable)
+  - Post Suggestion (onlySponsor / votable)
+  - End Event (votable)
+- Event Now (Optional for Actual Event Date)
+  - Token Gating (attendees)
+  - NFT Minting (onlyOwner / onlyContract / votable)
+- Event Ended
+  - Report Organizer (votable)
+  - Attendance NFT Evolution
+  - Return Funds => Burn DAO Token
 
 ### Ideas
 

@@ -17,5 +17,5 @@ interface IEvent {
   event EventEnded();
 
   function name() external view returns (string memory);
-  function version() external view returns (string memory);
+  function state(uint256 eventId) external view returns (ProtocolState);
 }
