@@ -1,4 +1,4 @@
-# Typescript DAO
+# Core Contracts
 
 ### Installation
 
@@ -9,6 +9,7 @@
 npm i
 npm run prepare
 npm i -g eslint
+npm run prettier && npm run lint
 ```
 
 - Run localhost scripts
