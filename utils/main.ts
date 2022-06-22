@@ -1,8 +1,9 @@
 import { HardhatEthersHelpers } from "@nomiclabs/hardhat-ethers/types";
 import { network, run } from "hardhat";
-import { DEV_CHAINS } from "./env";
 import fs from "fs";
 import path from "path";
+
+import { DEV_CHAINS } from "./env";
 
 /**
  * =====================================
@@ -110,10 +111,12 @@ export const getAddresses = async () => {
 export const readJson = async (type?: string, name?: string, file?: string) => {
   const fileName = file || "json/constants.json";
   const rawdata = await fs.promises.readFile(path.resolve(__dirname, fileName));
-  let object = undefined;
+  let object;
+  /* eslint-disable no-empty */
   try {
     object = JSON.parse(rawdata.toString());
   } catch (e) {}
+  /* eslint-enable no-empty */
   if (object === undefined) return undefined;
   if (type === undefined) return object;
   if (name === undefined) return object[type];
@@ -138,12 +141,7 @@ export const saveJson = async (
   );
 };
 
-export const filterObj = (obj: Object, str: string) => {
-  return Object.fromEntries(
-    Object.entries(obj).filter(([key]) => key.includes(str))
-  );
-};
+export const filterObj = (obj: Object, str: string) =>
+  Object.fromEntries(Object.entries(obj).filter(([key]) => key.includes(str)));
 
-export const addressName = (name: string) => {
-  return `${getNetwork()}-${name}`;
-};
+export const addressName = (name: string) => `${getNetwork()}-${name}`;

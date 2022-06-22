@@ -36,7 +36,7 @@ export const propose = async (
   const proposalReceipt = await proposalTx.wait(BLOCK_BUFFER);
 
   // SAVE PROPOSAL ID
-  const proposalId = proposalReceipt.events[0].args.proposalId;
+  const { proposalId } = proposalReceipt.events[0].args;
   await saveProposalId(proposalId, description);
   if (isDevChain()) await moveBlocks(VOTING_DELAY + 1);
 };
@@ -54,7 +54,7 @@ export const vote = async (
     voteWay,
     reason
   );
-  const voteTxReceipt = await voteTx.wait(BLOCK_BUFFER);
+  await voteTx.wait(BLOCK_BUFFER);
   if (isDevChain()) await moveBlocks(VOTING_PERIOD + 1);
 };
 
@@ -106,7 +106,8 @@ export const sampleFunction = async (ethers: HardhatEthersHelpers) => {
 
 export const readBoxValue = async (ethers: HardhatEthersHelpers) => {
   const Box = await getContract(ethers, "Box");
-  return await Box.retrieve();
+  const value = await Box.retrieve();
+  return value;
 };
 
 export const saveProposalId = async (
@@ -128,18 +129,15 @@ export const readProposalId = async () => {
   return proposals[proposals.length - 1];
 };
 
-export const readProposalsId = async () => {
-  return Object.keys(
-    await readJson(getChainId(), undefined, "json/proposals.json")
-  );
-};
+export const readProposalsId = async () =>
+  Object.keys(await readJson(getChainId(), undefined, "json/proposals.json"));
 
 export const deployGovernance = async (
   ethers: HardhatEthersHelpers,
-  MIN_DELAY: number,
-  QUORUM_PERCENTAGE: number,
-  VOTING_PERIOD: number,
-  VOTING_DELAY: number
+  _MIN_DELAY: number,
+  _QUORUM_PERCENTAGE: number,
+  _VOTING_PERIOD: number,
+  _VOTING_DELAY: number
 ) => {
   const deployer = await getDeployer(ethers);
 
@@ -150,16 +148,16 @@ export const deployGovernance = async (
   await transactionResponse.wait(1);
 
   const GovernorTimelock = await ethers.getContractFactory("GovernorTimelock");
-  const governorTimelock = await GovernorTimelock.deploy(MIN_DELAY, [], []);
+  const governorTimelock = await GovernorTimelock.deploy(_MIN_DELAY, [], []);
   await governorTimelock.deployed();
 
   const GovernorContract = await ethers.getContractFactory("GovernorContract");
   const governorContract = await GovernorContract.deploy(
     governanceToken.address,
     governorTimelock.address,
-    QUORUM_PERCENTAGE,
-    VOTING_PERIOD,
-    VOTING_DELAY
+    _QUORUM_PERCENTAGE,
+    _VOTING_PERIOD,
+    _VOTING_DELAY
   );
   await governorContract.deployed();
 

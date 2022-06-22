@@ -3,15 +3,19 @@
 ### Installation
 
 - Create .env file
-- Run localhost scripts
+- Setup environment
 
 ```
 npm i
 npm run prepare
+npm i -g eslint
+```
+
+- Run localhost scripts
+
+```
 npm run node
-
 // OPEN NEW TERMINAL
-
 npm run deploy
 npm run sample
 ```

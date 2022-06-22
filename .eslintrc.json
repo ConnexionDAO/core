@@ -3,12 +3,29 @@
     "browser": true,
     "es2021": true
   },
-  "extends": ["airbnb-base"],
+  "extends": ["airbnb-base", "prettier"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
   "plugins": ["@typescript-eslint"],
-  "rules": {}
+  "rules": {},
+  "overrides": [
+    {
+      "files": ["**/*.ts"],
+      "rules": {
+        "import/no-extraneous-dependencies": "off",
+        "import/no-unresolved": "off",
+        "import/extensions": "off",
+        "no-use-before-define": "off",
+        "no-plusplus": "off",
+        "no-await-in-loop": "off"
+      }
+    }
+  ]
 }
+
+// eslint-disable-next-line
+/* eslint-disable */
+/* eslint-enable */
