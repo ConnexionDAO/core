@@ -38,7 +38,7 @@ npm run testnet_sample
   - Subscribtion NFT (Expirable / User NFT Linkable)
   - Content NFT (Access Token / L. Edition / User NFT Linkable)
 
-#### Event Flow
+### Event Flow
 
 Events can be in 5 states:
 
