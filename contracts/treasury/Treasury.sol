@@ -111,7 +111,6 @@ abstract contract Treasury is AccessControl {
   function setLock(bool value) external {
     locked = value;
   }
-  function claim() external {}
   event Received (address sender, uint256 amount);
   event ReceivedToken (address sender, uint256 amount);
 }
