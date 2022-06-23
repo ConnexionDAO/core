@@ -27,6 +27,7 @@
     "@openzeppelin/contracts": "^4.6.0"
   },
   "scripts": {
+    "prepare": "husky install",
     "lint": "eslint **/*.ts",
     "prettier": "prettier --write --ignore-unknown **/*",
     "test": "npx hardhat test",
@@ -34,8 +35,7 @@
     "deploy": "npx hardhat run scripts/deploy.ts --network localhost",
     "sample": "npx hardhat run scripts/sample_vote.ts --network localhost",
     "testnet_deploy": "npx hardhat run scripts/deploy.ts --network rinkeby",
-    "testnet_sample": "npx hardhat run scripts/sample_vote.ts --network rinkeby",
-    "prepare": "husky install"
+    "testnet_sample": "npx hardhat run scripts/sample_vote.ts --network rinkeby"
   },
   "lint-staged": {
     "**/*.ts": "npm run lint",

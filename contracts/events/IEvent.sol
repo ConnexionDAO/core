@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 interface IEvent {
-  enum ProtocolState {
+  enum EventState {
     FUND_RAISING,
     FUND_COLLECTED,
     EVENT_NOW,
@@ -17,5 +17,5 @@ interface IEvent {
   event EventEnded();
 
   function name() external view returns (string memory);
-  function state(uint256 eventId) external view returns (ProtocolState);
+  function state(uint256 eventId) external view returns (EventState);
 }

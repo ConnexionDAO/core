@@ -36,7 +36,7 @@ npm run testnet_sample
   - Randomised NFT (Create -> mintRandom)
 - Social Hub (User NFT)
   - Subscribtion NFT (Expirable / User NFT Linkable)
-  - Content NFT (Access Token / L. Edition / User NFT Linkable)
+  - Content NFT (Access Token / L. Edition / Randomiser / User NFT Linkable)
 
 ### Event Flow
 

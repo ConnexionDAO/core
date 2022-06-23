@@ -20,8 +20,12 @@ abstract contract Event is IEvent {
   string private _name;
   mapping(uint256 => EventStruct) private _events;
 
-  function state(uint256 eventId) public view virtual returns (ProtocolState) {
-
+  function state(uint256 eventId) public view virtual returns (EventState) {
+    EventStruct memory eventStruct = _events[eventId];
+    if (eventStruct.eventEnded) return EventState.EVENT_ENDED;
+    if (eventStruct.paused) return EventState.PAUSED;
+    if (eventStruct.eventNow) return EventState.EVENT_NOW;
+    return EventState.FUND_RAISING;
   }
 
   function hashEvent(
