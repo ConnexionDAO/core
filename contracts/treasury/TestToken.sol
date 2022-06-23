@@ -6,9 +6,13 @@ import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
-contract GovernanceToken is ERC20, ERC20Permit, ERC20Votes, ERC20Burnable {
-  constructor() ERC20("GovernanceToken", "GOV") ERC20Permit("GovernanceToken") {
+contract TestFaucet is ERC20, ERC20Permit, ERC20Votes, ERC20Burnable {
+  constructor() ERC20("TestToken", "TTK") ERC20Permit("TestToken") {
     _mint(msg.sender, 1000 * 10 ** decimals());
+  }
+
+  function mint() public {
+    _mint(msg.sender, 2 * decimals());
   }
 
   // The following functions are overrides required by Solidity.
