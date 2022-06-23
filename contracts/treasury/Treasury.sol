@@ -17,6 +17,7 @@ abstract contract Treasury is AccessControl {
     Timers.BlockNumber release;
     uint64 maxPercent;
     uint256 maxAmount;
+    address receipient;
   }
   mapping(uint256 => Schedule) private _schedule;
   Counters.Counter private _schedule_count;
@@ -26,16 +27,19 @@ abstract contract Treasury is AccessControl {
     _setupRole(GOVERNOR, _msgSender());
     _setupRole(GOVERNOR, address(this));
   }
-  function setSchedule(uint64 offset, uint64 maxPercent, uint256 maxAmount) external {
+
+  function setSchedule(uint64 offset, uint64 maxPercent, uint256 maxAmount, address receipient) external {
     _schedule_count.increment();
     Schedule storage schedule = _schedule[_schedule_count.current()];
     require(schedule.release.isUnset(), "Schedule Created");
-    
+
     schedule.release.setDeadline(block.number.toUint64() + offset);
     schedule.maxPercent = maxPercent;
     schedule.maxAmount = maxAmount;
+    schedule.receipient = receipient;
     _schedule[_schedule_count.current()] = schedule;
   }
+  
   function contribute() external payable {}
   function release() external {}
   function lock() external {}
