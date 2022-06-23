@@ -6,6 +6,11 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Timers.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/TokenTimelock.sol";
+
+
 abstract contract Treasury is AccessControl {
   using Timers for Timers.BlockNumber;
   using Counters for Counters.Counter;
@@ -20,6 +25,7 @@ abstract contract Treasury is AccessControl {
     address receipient;
   }
   mapping(uint256 => Schedule) private _schedule;
+  Timers.BlockNumber private fullRelease;
   Counters.Counter private _schedule_count;
   bool private locked;
 
@@ -40,8 +46,12 @@ abstract contract Treasury is AccessControl {
     _schedule[_schedule_count.current()] = schedule;
   }
   
-  function contribute() external payable {}
-  function release() external {}
+  function contribute(address sender, address contributor) external payable {
+    
+  }
+  function release() external {
+
+  }
   function lock() external {}
   function unlock() external {}
   function claim() external {}

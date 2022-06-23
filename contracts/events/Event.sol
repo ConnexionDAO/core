@@ -20,7 +20,7 @@ abstract contract Event is IEvent {
   string private _name;
   mapping(uint256 => EventStruct) private _events;
 
-  function state(uint256 eventId) public view virtual returns (EventState) {
+  function state(uint256 eventId) public view virtual override returns (EventState) {
     EventStruct memory eventStruct = _events[eventId];
     if (eventStruct.eventEnded) return EventState.EVENT_ENDED;
     if (eventStruct.paused) return EventState.PAUSED;
