@@ -34,9 +34,9 @@
     "compile": "rm -rf artifacts cache && npx hardhat compile",
     "node": "npx hardhat node",
     "deploy": "npx hardhat run scripts/deploy.ts --network localhost",
-    "sample": "npx hardhat run scripts/sample_vote.ts --network localhost",
+    "gov": "npx hardhat run scripts/test_governance.ts --network localhost",
     "testnet_deploy": "npx hardhat run scripts/deploy.ts --network rinkeby",
-    "testnet_sample": "npx hardhat run scripts/sample_vote.ts --network rinkeby"
+    "testnet_gov": "npx hardhat run scripts/test_governance.ts --network rinkeby"
   },
   "lint-staged": {
     "**/*.ts": "npm run lint",
