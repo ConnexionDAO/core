@@ -43,8 +43,8 @@ abstract contract Treasury is AccessControl {
   }
 
   function setSchedule(uint64 offset, uint256 amount, address receipient) external {
-    _schedule_count.increment();
     Schedule storage schedule = _schedule[_schedule_count.current()];
+    _schedule_count.increment();
     require(schedule.release.isUnset(), "Error: Release schedule has been created at id");
 
     schedule.release.setDeadline(block.number.toUint64() + offset);
