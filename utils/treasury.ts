@@ -2,7 +2,7 @@ import { HardhatEthersHelpers } from "@nomiclabs/hardhat-ethers/types";
 import { getDeployer } from "./main";
 
 export const deploy = async (ethers: HardhatEthersHelpers) => {
-  const deployer = await getDeployer(ethers);
+  await getDeployer(ethers);
 
   const TokenTimelock = await ethers.getContractFactory("TokenTimelock");
   const tokenTimelock = await TokenTimelock.deploy();
