@@ -12,13 +12,11 @@ abstract contract BaseERC721 is ERC721, Ownable {
 
   constructor() ERC721("MyToken", "MTK") {}
 
-  function safeMint(address to) public onlyOwner {
-    uint256 tokenId = _tokenIdCounter.current();
-    _tokenIdCounter.increment();
-    _safeMint(to, tokenId);
+  function mintRandom(address to) external {
+    _safeMint(to, randomUnset(2**256-1));
   }
     
-  function random(uint256 maxNumber) internal returns(uint256) {
+  function random() internal returns(uint256) {
     _randomCounter.increment();
     return uint256(
       keccak256(
@@ -26,6 +24,26 @@ abstract contract BaseERC721 is ERC721, Ownable {
           block.timestamp, block.difficulty, _randomCounter.current()
         )
       )
-    ) % maxNumber;
+    );
+  }
+
+  function randomUnset(uint256 maxNumber) internal returns (uint256) {
+    uint256 num = random() % maxNumber;
+    if (num % 2 == 0) {
+      while (num < maxNumber) {
+        if (!_exists(num)) return num;
+        unchecked {
+          num += 1;
+        }
+      }
+      return maxNumber;
+    }
+    while (num > 0) {
+      if (!_exists(num)) return num;
+      unchecked {
+        num -= 1;
+      }
+    }
+    return maxNumber;
   }
 }

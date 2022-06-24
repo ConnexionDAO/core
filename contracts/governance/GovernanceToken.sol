@@ -4,9 +4,8 @@ pragma solidity ^0.8.4;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
-contract GovernanceToken is ERC20, ERC20Permit, ERC20Votes, ERC20Burnable {
+contract GovernanceToken is ERC20, ERC20Permit, ERC20Votes {
   constructor() ERC20("GovernanceToken", "GOV") ERC20Permit("GovernanceToken") {
     _mint(msg.sender, 1000 * 10 ** decimals());
   }
