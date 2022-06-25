@@ -54,7 +54,7 @@ abstract contract Treasury is AccessControl {
     _schedule[_schedule_count.current()] = schedule;
   }
   
-  receive() external payable {
+  function receiveCoin() external payable {
     require(treasuryCoin, "treasury token - use the receiveToken function instead");
     require(msg.value >= minContribution, "min contribution to reached");
     emit Received(msg.sender, msg.value);
