@@ -66,6 +66,10 @@ Events can be in 5 states:
 - Social Media with DApps
 - Lifeline recording for family tree, resume, etc# events-dao
 
+### Housekeeping
+
+- [Trello board](https://trello.com/invite/b/1M5qNTmd/49c7a36f988960a7be5e6d042fd4d588/connexion-dao)
+
 ### Acknowledgments
 
 - [Openzeppelin Governance Walkthrough](https://docs.openzeppelin.com/contracts/4.x/governance)
