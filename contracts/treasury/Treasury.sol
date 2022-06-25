@@ -11,6 +11,12 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/TokenTimelock.sol";
 
+/**
+ * TODO:
+ * Access Control
+ * Modularisation
+ * Parameterisation
+ */
 abstract contract Treasury is AccessControl {
   using Timers for Timers.BlockNumber;
   using Counters for Counters.Counter;
@@ -29,88 +35,106 @@ abstract contract Treasury is AccessControl {
   }
   mapping(uint256 => Schedule) private _schedule;
   Counters.Counter private _schedule_count;
-  Timers.BlockNumber private releaseDate;
+  Timers.BlockNumber private _releaseDate;
 
-  IERC20 private governanceToken;
-  IERC20 private treasuryToken;
-  bool private treasuryCoin;
-  uint256 private minContribution;
-  bool private locked;
+  IERC20 private _governanceToken;
+  IERC20 private _treasuryToken;
+  bool private _treasuryCoin;
+
+  uint256 private _minContribution;
+  bool private _locked;
 
   constructor() {
     _setupRole(GOVERNOR, _msgSender());
     _setupRole(GOVERNOR, address(this));
   }
 
+  modifier unlocked {
+    require(!_locked);
+    _;
+   }
+
   function setSchedule(uint64 offset, uint256 amount, address receipient) external {
-    Schedule storage schedule = _schedule[_schedule_count.current()];
+    // check valid schedule id
     _schedule_count.increment();
-    require(schedule.release.isUnset(), "Error: Release schedule has been created at id");
+    uint256 schedule_id = _schedule_count.current();
+    require(
+      _schedule[schedule_id].release.isUnset(),
+      "Treasury: invalid schedule id"
+    );
 
-    schedule.release.setDeadline(block.number.toUint64() + offset);
-    schedule.amount = amount;
-    schedule.receipient = receipient;
-    schedule.fulfilled = false;
-    _schedule[_schedule_count.current()] = schedule;
-  }
-  
-  function receiveCoin() external payable {
-    require(treasuryCoin, "treasury token - use the receiveToken function instead");
-    require(msg.value >= minContribution, "min contribution to reached");
-    emit Received(msg.sender, msg.value);
+    // set new schedule
+    _schedule[schedule_id] = Schedule({
+      release: Timers.BlockNumber({
+        _deadline: block.number.toUint64() + offset
+      }),
+      amount: amount,
+      receipient: receipient,
+      fulfilled: false
+    });
+    emit ScheduleSet(_schedule[schedule_id]);
   }
 
-  function receiveToken(uint256 amount) external {
-    require(!treasuryCoin, "treasury coin - use the receive function instead");
-    require(amount >= minContribution, "min contribution to reached");
-    // receive token
-    treasuryToken.safeTransferFrom(msg.sender, address(this), amount);
-    // send governance token
-    governanceToken.safeTransferFrom(address(this), msg.sender, amount * exchangeRate());
+  function receiveToken(uint256 amount) external payable {
+    if (_treasuryCoin) {
+      require(msg.value >= _minContribution, "Treasury: min contribution not reached");
+      _governanceToken.safeTransferFrom(address(this), msg.sender, amount * exchangeRate());
+      emit ReceivedToken(msg.sender, msg.value);
+      return;
+    }
+    require(amount >= _minContribution, "Treasury: min contribution not reached");
+    _treasuryToken.safeTransferFrom(msg.sender, address(this), amount);
+    _governanceToken.safeTransferFrom(address(this), msg.sender, amount * exchangeRate());
     emit ReceivedToken(msg.sender, amount);
   }
 
-  function release(uint256 scheduleId) external {
+  function releaseToken(uint256 scheduleId) external unlocked {
     Schedule storage schedule = _schedule[scheduleId];
-    require(schedule.release.isExpired(), "Scheduled release not expired");
-    require(!schedule.fulfilled, "Scheduled release fulfilled");
-    // delete release schedule
+    require(schedule.release.isExpired(), "Treasury: release date not reached");
+    require(!schedule.fulfilled, "Treasury: schedule has been fulfilled");
+    // transfer treasury
     _schedule[scheduleId].fulfilled = true;
-    // transfer treasury token
-    transferTreasury(schedule.receipient, schedule.amount.max(treasurySupply()));
+    transferTreasury(schedule.receipient, schedule.amount.min(treasurySupply()));
+    emit ReleaseToken(_schedule[scheduleId]);
   }
 
-  function claim(uint256 amount) external {
-    // receive governance token
-    governanceToken.safeTransferFrom(msg.sender, address(this), amount);
-    // send token
+  function claim(uint256 amount) external unlocked {
+    _governanceToken.safeTransferFrom(msg.sender, address(this), amount);
     transferTreasury(msg.sender, amount / exchangeRate());
+    emit ClaimToken(msg.sender, amount, exchangeRate());
+  }
+
+  function setLock(bool value) external {
+    _locked = value;
+    emit SetLock(value);
   }
 
   function transferTreasury(address to, uint256 amount) internal {
-    require(amount <= 0, "transfer zero value");
-    require(amount <= treasurySupply(), "insufficient treasury supply");
-    if (treasuryCoin) {
+    require(amount > 0, "Treasury: cannot transfer zero value");
+    require(amount <= treasurySupply(), "Treasury: insufficient treasury supply");
+    if (_treasuryCoin) {
       payable(to).transfer(amount);
       return;
     }
-    treasuryToken.safeTransferFrom(address(this), to, amount);
+    _treasuryToken.safeTransferFrom(address(this), to, amount);
   }
 
   function exchangeRate() internal view returns (uint256) {
     return (
-      governanceToken.totalSupply() - governanceToken.balanceOf(address(this))
+      _governanceToken.totalSupply() - _governanceToken.balanceOf(address(this))
     ) / treasurySupply();
   }
 
   function treasurySupply() internal view returns (uint256) {
-    if (treasuryCoin) { return address(this).balance; }
-    return treasuryToken.balanceOf(address(this));
+    if (_treasuryCoin) {
+      return address(this).balance;
+    }
+    return _treasuryToken.balanceOf(address(this));
   }
 
-  function setLock(bool value) external {
-    locked = value;
-  }
-  event Received (address sender, uint256 amount);
   event ReceivedToken (address sender, uint256 amount);
+  event ScheduleSet (Schedule schedule);
+  event ReleaseToken (Schedule schedule);
+  event ClaimToken (address sender, uint256 amount, uint256 exchangeRate);
+  event SetLock(bool locked);
 }
