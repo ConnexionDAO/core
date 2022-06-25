@@ -69,6 +69,7 @@ Events can be in 5 states:
 ### Housekeeping
 
 - [Trello board](https://trello.com/invite/b/1M5qNTmd/49c7a36f988960a7be5e6d042fd4d588/connexion-dao)
+- [Best Practices](https://consensys.net/blog/developers/solidity-best-practices-for-smart-contract-security/)
 
 ### Acknowledgments
 
