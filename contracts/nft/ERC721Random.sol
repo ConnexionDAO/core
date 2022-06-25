@@ -2,11 +2,11 @@
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/utils/Timers.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/Timers.sol";
 
-abstract contract BaseERC721 is ERC721, AccessControl {
+abstract contract BaseERC721 is ERC721, Ownable {
   using Counters for Counters.Counter;
   using Timers for Timers.BlockNumber;
 
@@ -14,18 +14,13 @@ abstract contract BaseERC721 is ERC721, AccessControl {
     uint256 start;
     uint256 end;
   }
-
   Counters.Counter private _randomCounter;
   Counters.Counter private _collectionsCounter;
   uint256 private _tokenCounter;
   mapping(uint256 => Collection) private _collections;
   mapping(uint256 => uint256) private _collectionBalance;
 
-  constructor() ERC721("MyToken", "MTK") {}
-
-  function supportsInterface(bytes4 interfaceId) public view virtual override (AccessControl, ERC721) returns (bool) {
-    return super.supportsInterface(interfaceId);
-  }
+  constructor(string memory _name, string memory _symbol) ERC721(_name, _symbol) {}
 
   function getCollection(uint256 collectionId) external view returns (Collection memory) {
     return _collections[collectionId];

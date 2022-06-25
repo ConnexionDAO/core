@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Timers.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
@@ -17,15 +17,12 @@ import "@openzeppelin/contracts/token/ERC20/utils/TokenTimelock.sol";
  * Modularisation
  * Parameterisation
  */
-abstract contract Treasury is AccessControl {
+abstract contract Treasury is Ownable {
   using Timers for Timers.BlockNumber;
   using Counters for Counters.Counter;
   using SafeCast for uint256;
   using SafeERC20 for IERC20;
   using Math for uint256;
-
-  bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
-  bytes32 public constant GOVERNOR = keccak256("GOVERNOR_ROLE");
 
   struct Schedule {
     Timers.BlockNumber release;
@@ -34,7 +31,7 @@ abstract contract Treasury is AccessControl {
     bool fulfilled;
   }
   mapping(uint256 => Schedule) private _schedule;
-  Counters.Counter private _schedule_count;
+  Counters.Counter private _scheduleCount;
   Timers.BlockNumber private _releaseDate;
 
   IERC20 private _governanceToken;
@@ -44,27 +41,24 @@ abstract contract Treasury is AccessControl {
   uint256 private _minContribution;
   bool private _locked;
 
-  constructor() {
-    _setupRole(GOVERNOR, _msgSender());
-    _setupRole(GOVERNOR, address(this));
-  }
+  constructor() {}
 
-  modifier unlocked {
+  modifier lockable {
     require(!_locked);
     _;
-   }
+  }
 
   function setSchedule(uint64 offset, uint256 amount, address receipient) external {
     // check valid schedule id
-    _schedule_count.increment();
-    uint256 schedule_id = _schedule_count.current();
+    _scheduleCount.increment();
+    uint256 scheduleId = _scheduleCount.current();
     require(
-      _schedule[schedule_id].release.isUnset(),
+      _schedule[scheduleId].release.isUnset(),
       "Treasury: invalid schedule id"
     );
 
     // set new schedule
-    _schedule[schedule_id] = Schedule({
+    _schedule[scheduleId] = Schedule({
       release: Timers.BlockNumber({
         _deadline: block.number.toUint64() + offset
       }),
@@ -72,7 +66,7 @@ abstract contract Treasury is AccessControl {
       receipient: receipient,
       fulfilled: false
     });
-    emit ScheduleSet(_schedule[schedule_id]);
+    emit ScheduleSet(_schedule[scheduleId]);
   }
 
   function receiveToken(uint256 amount) external payable {
@@ -88,7 +82,7 @@ abstract contract Treasury is AccessControl {
     emit ReceivedToken(msg.sender, amount);
   }
 
-  function releaseToken(uint256 scheduleId) external unlocked {
+  function releaseToken(uint256 scheduleId) external lockable {
     Schedule storage schedule = _schedule[scheduleId];
     require(schedule.release.isExpired(), "Treasury: release date not reached");
     require(!schedule.fulfilled, "Treasury: schedule has been fulfilled");
@@ -98,7 +92,7 @@ abstract contract Treasury is AccessControl {
     emit ReleaseToken(_schedule[scheduleId]);
   }
 
-  function claim(uint256 amount) external unlocked {
+  function claim(uint256 amount) external lockable {
     _governanceToken.safeTransferFrom(msg.sender, address(this), amount);
     transferTreasury(msg.sender, amount / exchangeRate());
     emit ClaimToken(msg.sender, amount, exchangeRate());
