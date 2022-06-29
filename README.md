@@ -18,14 +18,14 @@ npm run prettier && npm run lint
 npm run node
 // OPEN NEW TERMINAL
 npm run deploy
-npm run sample
+npm run gov
 ```
 
 - Run testnet scripts
 
 ```
 npm run testnet_deploy
-npm run testnet_sample
+npm run testnet_gov
 ```
 
 ### Contracts
