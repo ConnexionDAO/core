@@ -10,47 +10,38 @@ abstract contract Event {
   
   enum EventState {
     FUND_RAISING,
-    FUND_COLLECTED,
+    FUND_RAISED,
     EVENT_NOW,
     EVENT_ENDED,
     PAUSED
   }
 
   struct EventStruct {
-    Timers.BlockNumber fundingEnd;
+    address governor;
+    address treasury;
+    address nft;
+    Timers.BlockNumber fundingDeadline;
     uint256 raise;
-    bool paused;
-    bool eventNow;
-    bool eventEnded;
+    EventState state;
   }
 
   string private _name;
   mapping(uint256 => EventStruct) private _events;
 
-  function state(uint256 eventId) view external returns (EventState) {
-    EventStruct memory eventStruct = _events[eventId];
-    if (eventStruct.eventEnded) return EventState.EVENT_ENDED;
-    if (eventStruct.paused) return EventState.PAUSED;
-    if (eventStruct.eventNow) return EventState.EVENT_NOW;
-    return EventState.FUND_RAISING;
+  function create() external {}
+  function setPaused(bool value) external {}
+  function setFundRaising() external {}
+  function setFundRaised() external {}
+  function setEventNow() external {}
+  function setEventEnded() external {}
+  function state(uint256 eventId) internal pure returns (EventState) {
+    return EventState.EVENT_NOW;
   }
 
-  function hashEvent(
-    address[] memory targets,
-    uint256[] memory values,
-    bytes[] memory calldatas,
-    bytes32 descriptionHash
-  ) public pure virtual returns (uint256) {
-    return uint256(keccak256(abi.encode(targets, values, calldatas, descriptionHash)));
+  function hashEvent() internal pure returns (uint256) {
+    return uint256(keccak256(abi.encode()));
   }
 
-  function createEvent(
-    
-  ) public virtual {
-    EventStruct storage eventStruct = _events[1];
-    uint64 snapshot = block.number.toUint64() + 10;
-    eventStruct.fundingEnd.setDeadline(snapshot);
-  }
   event EventCreated();
   event EventPaused();
   event EventUnpaused();

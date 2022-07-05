@@ -54,6 +54,10 @@ export const getContract = async (
 };
 
 export const moveBlocks = async (amount: number) => {
+  if (!isDevChain()) {
+    console.log(`Is Production Chain, Not Moved ${amount} blocks`);
+    return;
+  }
   for (let index = 0; index < amount; index++) {
     await network.provider.request({
       method: "evm_mine",
@@ -64,6 +68,12 @@ export const moveBlocks = async (amount: number) => {
 };
 
 export const moveTime = async (amount: number) => {
+  if (!isDevChain()) {
+    console.log(
+      `Is Production Chain, Not Moved forward in time ${amount} seconds`
+    );
+    return;
+  }
   await network.provider.send("evm_increaseTime", [amount]);
   console.log(`Moved forward in time ${amount} seconds`);
 };

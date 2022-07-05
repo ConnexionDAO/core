@@ -38,7 +38,7 @@ export const propose = async (
   // SAVE PROPOSAL ID
   const { proposalId } = proposalReceipt.events[0].args;
   await saveProposalId(proposalId, description);
-  if (isDevChain()) await moveBlocks(VOTING_DELAY + 1);
+  await moveBlocks(VOTING_DELAY + 1);
 };
 
 // 0 = Against, 1 = For, 2 = Abstain for this example
@@ -55,7 +55,7 @@ export const vote = async (
     reason
   );
   await voteTx.wait(BLOCK_BUFFER);
-  if (isDevChain()) await moveBlocks(VOTING_PERIOD + 1);
+  await moveBlocks(VOTING_PERIOD + 1);
 };
 
 export const queue = async (
@@ -73,10 +73,8 @@ export const queue = async (
     descriptionHash
   );
   await queueTx.wait(BLOCK_BUFFER);
-  if (isDevChain()) {
-    await moveTime(MIN_DELAY + 1);
-    await moveBlocks(1);
-  }
+  await moveTime(MIN_DELAY + 1);
+  await moveBlocks(1);
 };
 
 export const execute = async (
@@ -98,7 +96,7 @@ export const execute = async (
 
 export const sampleFunction = async (ethers: HardhatEthersHelpers) => {
   const Box = await getContract(ethers, "Box");
-  const encodedFuncCall = Box.interface.encodeFunctionData("store", [15]);
+  const encodedFuncCall = Box.interface.encodeFunctionData("store", [20]);
   const description = "Proposal Description";
   const descriptionHash = utils.keccak256(utils.toUtf8Bytes(description));
   return [Box.address, encodedFuncCall, description, descriptionHash];

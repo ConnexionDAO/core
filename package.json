@@ -34,6 +34,7 @@
     "compile": "rm -rf artifacts cache && npx hardhat compile",
     "node": "npx hardhat node",
     "deploy": "npx hardhat run scripts/deploy.ts --network localhost",
+    "treasury": "npx hardhat run scripts/test_treasury.ts --network localhost",
     "gov": "npx hardhat run scripts/test_governance.ts --network localhost",
     "testnet_deploy": "npx hardhat run scripts/deploy.ts --network rinkeby",
     "testnet_gov": "npx hardhat run scripts/test_governance.ts --network rinkeby"

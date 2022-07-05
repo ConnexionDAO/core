@@ -17,7 +17,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/TokenTimelock.sol";
  * Modularisation
  * Parameterisation
  */
-abstract contract Treasury is Ownable {
+contract Treasury is Ownable {
   using Timers for Timers.BlockNumber;
   using Counters for Counters.Counter;
   using SafeCast for uint256;
@@ -39,9 +39,26 @@ abstract contract Treasury is Ownable {
   bool private _treasuryCoin;
 
   uint256 private _minContribution;
+  uint256 private _initExchangeRate;
   bool private _locked;
 
-  constructor() {}
+  constructor(
+    uint64 releaseDate,
+    bool treasuryCoin,
+    IERC20 treasuryToken,
+    IERC20 governanceToken,
+    uint256 minContribution,
+    bool locked,
+    uint256 initExchangeRate
+  ) {
+    _releaseDate = Timers.BlockNumber({ _deadline: releaseDate });
+    _treasuryCoin = treasuryCoin;
+    _treasuryToken = treasuryToken;
+    _governanceToken = governanceToken;
+    _minContribution = minContribution;
+    _locked = locked;
+    _initExchangeRate = initExchangeRate;
+  }
 
   modifier lockable {
     require(!_locked);
@@ -103,9 +120,14 @@ abstract contract Treasury is Ownable {
     emit SetLock(value);
   }
 
+  function treasuryAmount() external view returns (uint256) {
+    return treasurySupply();
+  }
+
   function transferTreasury(address to, uint256 amount) internal {
     require(amount > 0, "Treasury: cannot transfer zero value");
-    require(amount <= treasurySupply(), "Treasury: insufficient treasury supply");
+    require(treasurySupply() > 0, "Treasury: minimum treasury == 1");
+    require(amount < treasurySupply(), "Treasury: insufficient treasury supply");
     if (_treasuryCoin) {
       payable(to).transfer(amount);
       return;
@@ -114,9 +136,12 @@ abstract contract Treasury is Ownable {
   }
 
   function exchangeRate() internal view returns (uint256) {
-    return (
-      _governanceToken.totalSupply() - _governanceToken.balanceOf(address(this))
-    ) / treasurySupply();
+    if (treasurySupply() == 0 || governanceSupply() == 0) return _initExchangeRate;
+    return governanceSupply() / treasurySupply();
+  }
+
+  function governanceSupply() internal view returns (uint256) {
+    return _governanceToken.totalSupply() - _governanceToken.balanceOf(address(this));
   }
 
   function treasurySupply() internal view returns (uint256) {
