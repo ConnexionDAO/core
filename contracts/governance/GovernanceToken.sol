@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 
 contract GovernanceToken is ERC20, ERC20Permit, ERC20Votes {
   constructor() ERC20("GovernanceToken", "GOV") ERC20Permit("GovernanceToken") {
-    _mint(msg.sender, 1000 * 10 ** decimals());
+    _mint(msg.sender, 10000 * 10 ** decimals());
   }
 
   // The following functions are overrides required by Solidity.

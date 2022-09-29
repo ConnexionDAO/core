@@ -4,15 +4,15 @@
     "hardhat-GovernorTimelock": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
     "hardhat-GovernorContract": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
     "hardhat-Box": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-    "localhost-GovernanceToken": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-    "localhost-GovernorTimelock": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-    "localhost-GovernorContract": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-    "localhost-Box": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
+    "localhost-GovernanceToken": "0x8A93d247134d91e0de6f96547cB0204e5BE8e5D8",
+    "localhost-GovernorTimelock": "0xF32D39ff9f6Aa7a7A64d7a4F00a54826Ef791a55",
+    "localhost-GovernorContract": "0xd6e1afe5cA8D00A2EFC01B89997abE2De47fdfAf",
+    "localhost-Box": "0x99dBE4AEa58E518C50a1c04aE9b48C9F6354612f",
     "rinkeby-GovernanceToken": "0xE748E7c389858ff8fe215d61f6AeB3ea04D7676b",
     "rinkeby-GovernorTimelock": "0x88d537c01a8cF08a7A7D150188e56200052dA31A",
     "rinkeby-GovernorContract": "0xf0478624B0AFeE4827cF805a9455706faD1590e9",
     "rinkeby-Box": "0xCE7E816D90DFfdB76348c443C8AE367f50D1FbA5",
-    "localhost-Treasury": "0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44",
-    "localhost-TestERC20": "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f"
+    "localhost-Treasury": "0x4bf010f1b9beDA5450a8dD702ED602A104ff65EE",
+    "localhost-TestERC20": "0x40a42Baf86Fc821f972Ad2aC878729063CeEF403"
   }
 }

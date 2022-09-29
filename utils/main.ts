@@ -31,6 +31,11 @@ export const getDeployer = async (ethers: HardhatEthersHelpers) => {
   return deployer;
 };
 
+export const getDeployerRaw = async (ethers: HardhatEthersHelpers) => {
+  const [deployer] = await ethers.getSigners();
+  return deployer;
+};
+
 // TODO: deployed contract returns undeployed ContractFactory
 export const deployContract = async (
   ethers: HardhatEthersHelpers,

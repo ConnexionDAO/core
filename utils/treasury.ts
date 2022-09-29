@@ -1,5 +1,11 @@
 import { HardhatEthersHelpers } from "@nomiclabs/hardhat-ethers/types";
-import { getDeployer, getContract, readJson, addressName } from "./main";
+import {
+  getDeployer,
+  getContract,
+  readJson,
+  addressName,
+  moveBlocks,
+} from "./main";
 import { BLOCK_BUFFER } from "./env";
 
 export interface TreasuryParameters {
@@ -35,26 +41,37 @@ export const receiveToken = async (
   const treasuryContract = await getContract(ethers, "Treasury");
   const governanceToken = await getContract(ethers, "GovernanceToken");
   const testERC20 = await getContract(ethers, "TestERC20");
-  // transferERC20("TestERC20", treasuryContract.address, 1000*(10**18));
-  transferERC20(
+
+  // SEND MONEY TO TREASURY
+  const deployer = await getDeployer(ethers);
+
+  await transferERC20(
+    ethers,
+    "TestERC20",
+    treasuryContract.address,
+    1000 * 10 ** 18
+  );
+  await transferERC20(
     ethers,
     "GovernanceToken",
     treasuryContract.address,
     1000 * 10 ** 18
   );
-  if (isEth) {
-    const receiveTokenTx = await treasuryContract.receiveToken(amount);
-    await receiveTokenTx.wait(BLOCK_BUFFER);
-  } else {
-    const treasuryAddr: string = await readJson(
-      "addresses",
-      addressName("Treasury")
-    );
-    const approvalTx = await governanceToken.approve(treasuryAddr, amount);
-    await approvalTx.wait(BLOCK_BUFFER);
-    const receiveTokenTx = await treasuryContract.receiveToken(amount);
-    await receiveTokenTx.wait(BLOCK_BUFFER);
-  }
+
+  //
+  // if (isEth) {
+  //   const receiveTokenTx = await treasuryContract.receiveToken(amount);
+  //   await receiveTokenTx.wait(BLOCK_BUFFER);
+  // } else {
+  //   const treasuryAddr: string = await readJson(
+  //     "addresses",
+  //     addressName("Treasury")
+  //   );
+  //   const approvalTx = await governanceToken.approve(treasuryAddr, amount);
+  //   await approvalTx.wait(BLOCK_BUFFER);
+  //   const receiveTokenTx = await treasuryContract.receiveToken(amount);
+  //   await receiveTokenTx.wait(BLOCK_BUFFER);
+  // }
 };
 
 export const transferERC20 = async (
@@ -64,6 +81,18 @@ export const transferERC20 = async (
   amount: number
 ) => {
   const testERC20 = await getContract(ethers, contractName);
-  const transferTx = await testERC20.transfer(receipientAddr, amount);
+  const [deployer] = await ethers.getSigners();
+  console.log(
+    `'${contractName}' TRANSFER ERC20 (balance: ${await testERC20.balanceOf(
+      deployer.address
+    )})`
+  );
+
+  const transferTx = await testERC20.transfer(receipientAddr, BigInt(amount));
   await transferTx.wait(BLOCK_BUFFER);
+  console.log(
+    `'${contractName}' TRANSFERED ERC20 (balance: ${await testERC20.balanceOf(
+      deployer.address
+    )})`
+  );
 };
